@@ -4,23 +4,25 @@
 var msgBox = $('#errorModal');
 var msgPane = $('#errorMsg');
 
-function buildErrorMsg(msg){
+window.buildErrorMsg = function(msg){
     var message = msg.message;
     var errors = msg.errors;
     
     var title = '<h2><span class="text-danger">' + message + '</span></h2><br />';
     var errorList = '<span class="text-danger">';
     $.each(errors, function(idx, elem){
-        errorList += elem + '<br />';
+        errorList += elem.name + '<br />';
     });
     errorList += '</span>';
     var fullMsg = title + errorList;
     return fullMsg;
-}
+};
 
 
-function showErrors(msg){
+window.showErrors = function(msg){
     var errMsg = buildErrorMsg(msg);
     $(msgPane).html(errMsg);
     $(msgBox).modal('show');
-}
+};
+
+//{"message":"The given data was invalid.","errors":{"name":["The name has already been taken."]}}

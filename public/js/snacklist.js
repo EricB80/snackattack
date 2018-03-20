@@ -29,11 +29,11 @@ $(document).ready(function () {
      * @returns {undefined}
      */
     function updateEditFields(data) {
-        console.log('name='+data.snack_name);
         $('#editLabel').html(data.snack_name);
         $('#editName').val(data.snack_name);
         $('#editQty').val(data.pieces);
         $('#editDesc').val(data.description);
+        $('#editId').val(data.id);
     }
 
     /**
@@ -44,23 +44,22 @@ $(document).ready(function () {
         $('#editModal').modal('show');
     }
 
-    function saveEdits() {
-
-    }
-
     /**
-     * Send the POST request to add a snack fro the logged in user
+     * Send the POST request to add/update a snack for the logged in user
      * @param {obj} snack a snack data
      * @returns {NULL} renders HTML on page
      */
-    function addSnacks(snack) {
-        $.ajax({
+    function saveSnack(data) {
+        return $.ajax({
             url: 'snacks/addSnack',
             method: 'POST',
-            data: {name: snack.name, quantity: snack.quantity},
+            data: data,
             success: function (data) {
                 var table = buildTable(data);
                 $('#listHolder').html(table);
+            },
+            error: function (data) {
+                window.showErrors(data.responseJSON);
             }
         });
     }
@@ -99,7 +98,7 @@ $(document).ready(function () {
             table += '<td>' + elem.pieces + '</td>';
             table += '<td><span class="small">' + elem.description + '</span></td>';
             table += '<td><button class="snackEditor btn btn-success">Edit</button></td>';
-            table += '<td><button class="snackDeleter btn btn-dander">Delete</button></td>';
+            table += '<td><button class="snackDeleter btn btn-danger">Delete</button></td>';
             table += '</tr>';
         });
         table += '</tbody></table>';
@@ -133,7 +132,14 @@ $(document).ready(function () {
         var name = $('#snackName').val();
         var pcs = $('#snackQty').val();
         var newSnack = {name: name, quantity: pcs};
-        addSnacks(newSnack);
+        saveSnack(newSnack)
+                .done(function (data) {
+                    var table = buildTable(data);
+                    $('#listHolder').html(table);
+                })
+                .fail(function (data) {
+                    window.showErrors(data.responseJSON);
+                });
     });
 
     //listener for edit button
@@ -143,6 +149,27 @@ $(document).ready(function () {
                 .done(function (data) {
                     updateEditFields(data);
                     showEditor();
+                })
+                .fail(function (data) {
+                    window.showErrors(data.responseJSON);
+                });
+    });
+
+    //listener for save changes button
+    $(document.body).on('click', '#saveChanges', function () {
+        var id = $('#editId').val();
+        var name = $('#editName').val();
+        var desc = $('#editDesc').val();
+        var qty = $('#editQty').val();
+        var changeSnack = {id: id, name: name, quantity: qty, description: desc};
+        console.log(changeSnack);
+        saveSnack(changeSnack)
+                .done(function (data) {
+                    var table = buildTable(data);
+                    $('#listHolder').html(table);
+                })
+                .fail(function (data) {
+                    window.showErrors(data.responseJSON);
                 });
     });
 

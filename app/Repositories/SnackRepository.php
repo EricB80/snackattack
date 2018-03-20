@@ -25,7 +25,8 @@ class SnackRepository{
     public function snackDetails(User $user, $snack){
         return Snack::where('owner_id', $user->id)
                 ->where('id', $snack)
-                ->get();
+                ->get()
+                ->first(); //use this to ensure 1 row returned
     }
     
     /**
@@ -46,5 +47,18 @@ class SnackRepository{
         }
         
         return true;
+    }
+    
+    /**
+     * Update an snack object
+     * @param type $request
+     */
+    public function updateSnack($request){
+        $snack = $this->snackDetails($request->user(), $request->id);
+        
+        $snack->snack_name = $request->name;
+        $snack->pieces = $request->quantity;
+        $snack->description = $request->description;
+        $snack->save();
     }
 }

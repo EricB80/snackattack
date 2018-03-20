@@ -46,23 +46,34 @@ class SnackController extends Controller {
      */
     public function save(Request $request) {
         if ($request->ajax()) {
-            $this->validate($request, [
-                'name' => 'required|max:255',
-                'quantity' => 'required|numeric'
-            ]);
 
-            $newSnack = $this->snacks->addSnack($request);
-            
-            if($newSnack){
+            if (isset($request->id)) {
+                //update an existing snack
+                $this->validate($request, [
+                    'name' => 'required|max:255',
+                    'quantity' => 'required|numeric',
+                    'description' => 'nullable|max:255'
+                ]);
+                $snack = $this->snacks->updateSnack($request);
+            } else {
+                //new snack
+                $this->validate($request, [
+                    'name' => 'required|max:255|unique:snacks,snack_name,null,owner_id',
+                    'quantity' => 'required|numeric',
+                    'description' => 'nullable|max:255'
+                ]);
+                $snack = $this->snacks->addSnack($request);
+            }
+
+            if ($snack) {
                 return $this->getSnackData($request);
             }
-            
         }
     }
-    
-    public function details(Request $request){
-        if($request->ajax()){
-            $snack = $this->snacks->snackDetails($request->user(),$request->snack);
+
+    public function details(Request $request) {
+        if ($request->ajax()) {
+            $snack = $this->snacks->snackDetails($request->user(), $request->snack);
             return response()->json($snack);
         }
     }

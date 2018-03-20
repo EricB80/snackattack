@@ -35881,7 +35881,7 @@ module.exports = function spread(callback) {
 var msgBox = $('#errorModal');
 var msgPane = $('#errorMsg');
 
-function buildErrorMsg(msg) {
+window.buildErrorMsg = function (msg) {
     var message = msg.message;
     var errors = msg.errors;
 
@@ -35893,13 +35893,13 @@ function buildErrorMsg(msg) {
     errorList += '</span>';
     var fullMsg = title + errorList;
     return fullMsg;
-}
+};
 
-function showErrors(msg) {
+window.showErrors = function (msg) {
     var errMsg = buildErrorMsg(msg);
     $(msgPane).html(errMsg);
     $(msgBox).modal('show');
-}
+};
 
 /***/ }),
 /* 37 */

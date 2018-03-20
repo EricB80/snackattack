@@ -37,6 +37,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="form-horizontal col-sm-12">
+                        <input type="hidden" name="editId" id="editId"/>
                         <div class="form-group">
                             <label for="editName">Name: </label>
                             <input type="text" name="editName" id="editName" class="form-control"/>
